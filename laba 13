@@ -1,0 +1,98 @@
+import json
+
+# Вбудовані дані про телефони (імітація JSON-файлу)
+phones_json = '''
+[
+    {
+        "name": "iPhone 13",
+        "price": 999,
+        "rating": 4.8,
+        "reviews": 2500,
+        "features": "OLED дисплей, 5G, A15 Bionic"
+    },
+    {
+        "name": "Samsung Galaxy S21",
+        "price": 899,
+        "rating": 4.6,
+        "reviews": 1800,
+        "features": "AMOLED, Exynos 2100, 5G"
+    },
+    {
+        "name": "Xiaomi Redmi Note 10",
+        "price": 299,
+        "rating": 4.4,
+        "reviews": 3500,
+        "features": "AMOLED, Snapdragon 678, 4G"
+    },
+    {
+        "name": "Google Pixel 6",
+        "price": 599,
+        "rating": 4.5,
+        "reviews": 2000,
+        "features": "OLED, Google Tensor, 5G"
+    }
+]
+'''
+
+# Завантаження даних
+def load_phones():
+    return json.loads(phones_json)
+
+# Сортування телефонів
+def sort_phones(phones, key):
+    if key not in ["price", "rating", "reviews"]:
+        print("Невірний параметр сортування.")
+        return phones
+    return sorted(phones, key=lambda x: x[key], reverse=(key != "price"))
+
+# Пошук телефонів
+def search_phones(phones, keyword):
+    keyword = keyword.lower()
+    return [
+        phone for phone in phones
+        if keyword in phone["name"].lower() or keyword in phone["features"].lower()
+    ]
+
+# Вивід інформації про телефони
+def display_phones(phones):
+    for phone in phones:
+        print(f"{phone['name']} | ${phone['price']} | ⭐ {phone['rating']} | Відгуки: {phone['reviews']}")
+        print(f"  Характеристики: {phone['features']}\n")
+
+# Головне меню
+def main():
+    phones = load_phones()
+
+    while True:
+        print("\n=== МЕНЮ ===")
+        print("1. Показати всі телефони")
+        print("2. Сортувати за ціною")
+        print("3. Сортувати за рейтингом")
+        print("4. Сортувати за кількістю відгуків")
+        print("5. Пошук за назвою або характеристиками")
+        print("0. Вихід")
+        choice = input("Оберіть опцію: ")
+
+        if choice == "1":
+            display_phones(phones)
+        elif choice == "2":
+            display_phones(sort_phones(phones, "price"))
+        elif choice == "3":
+            display_phones(sort_phones(phones, "rating"))
+        elif choice == "4":
+            display_phones(sort_phones(phones, "reviews"))
+        elif choice == "5":
+            keyword = input("Введіть ключове слово для пошуку: ")
+            results = search_phones(phones, keyword)
+            if results:
+                display_phones(results)
+            else:
+                print("Нічого не знайдено.")
+        elif choice == "0":
+            print("Вихід з програми.")
+            break
+        else:
+            print("Невірна команда.")
+
+if __name__ == "__main__":
+    main()
