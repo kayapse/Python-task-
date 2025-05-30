@@ -1,0 +1,45 @@
+diary = [
+    {"date": "2025-05-17", "text": "Сьогодні був гарний день. Гуляв у парку."},
+    {"date": "2025-05-18", "text": "Працював над курсовою. Вивчав ООП у Python."},
+    {"date": "2025-05-19", "text": "Дощовий день, але настрій чудовий. Писав щоденник."}
+]
+
+def search_by_date(date):
+    print(f"\nПошук записів за датою: {date}")
+    results = [entry for entry in diary if entry["date"] == date]
+    if results:
+        for entry in results:
+            print(f"- {entry['date']}: {entry['text']}")
+    else:
+        print("Записів не знайдено.")
+
+def search_by_keyword(keyword):
+    print(f"\nПошук записів за ключовим словом: '{keyword}'")
+    results = [entry for entry in diary if keyword.lower() in entry["text"].lower()]
+    if results:
+        for entry in results:
+            print(f"- {entry['date']}: {entry['text']}")
+    else:
+        print("Записів не знайдено.")
+
+def diary_search():
+    while True:
+        print("\n=== Пошук у щоденнику ===")
+        print("1. Пошук за датою")
+        print("2. Пошук за ключовим словом")
+        print("3. Вихід")
+        choice = input("Ваш вибір: ")
+
+        if choice == "1":
+            date = input("Введіть дату у форматі YYYY-MM-DD: ")
+            search_by_date(date)
+        elif choice == "2":
+            keyword = input("Введіть ключове слово для пошуку: ")
+            search_by_keyword(keyword)
+        elif choice == "3":
+            print("Завершення програми.")
+            break
+        else:
+            print("Невірний вибір. Спробуйте ще раз.")
+
+diary_search()
