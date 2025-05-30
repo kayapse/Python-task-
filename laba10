@@ -1,0 +1,87 @@
+def factorial_recursive(n):
+    """Обчислює факторіал числа n рекурсивно.
+    
+    Аргументи:
+    n (int): невід'ємне ціле число
+    
+    Повертає:
+    int: факторіал числа n
+    
+    Викликає:
+    ValueError: якщо n є від'ємним числом
+    """
+    if not isinstance(n, int):
+        raise TypeError("Аргумент має бути цілим числом.")
+    if n < 0:
+        raise ValueError("Факторіал не визначений для від'ємних чисел.")
+    if n == 0:
+        return 1
+    else:
+        return n * factorial_recursive(n - 1)
+
+def fibonacci_recursive(n):
+    """Обчислює n-те число Фібоначчі рекурсивно.
+    
+    Аргументи:
+    n (int): невід'ємне ціле число
+    
+    Повертає:
+    int: n-те число Фібоначчі
+    
+    Викликає:
+    ValueError: якщо n є від'ємним числом
+    """
+    if not isinstance(n, int):
+        raise TypeError("Аргумент має бути цілим числом.")
+    if n < 0:
+        raise ValueError("Число Фібоначчі не визначене для від'ємних чисел.")
+    if n == 0:
+        return 0
+    elif n == 1:
+        return 1
+    else:
+        return fibonacci_recursive(n - 1) + fibonacci_recursive(n - 2)
+
+def sum_list_recursive(numbers):
+    """Обчислює суму всіх елементів списку рекурсивно.
+    
+    Аргументи:
+    numbers (list): список чисел
+    
+    Повертає:
+    int або float: сума елементів списку
+    """
+    if not isinstance(numbers, list):
+        raise TypeError("Аргумент має бути списком.")
+    if not numbers:
+        return 0
+    else:
+        return numbers[0] + sum_list_recursive(numbers[1:])
+
+def is_palindrome_recursive(s):
+    """Перевіряє, чи є рядок паліндромом рекурсивно.
+    
+    Аргументи:
+    s (str): вхідний рядок
+    
+    Повертає:
+    bool: True, якщо рядок є паліндромом, інакше False
+    """
+    if not isinstance(s, str):
+        raise TypeError("Аргумент має бути рядком.")
+    
+    # Очистка рядка: залишаємо тільки букви та цифри, ігноруємо регістр
+    s = ''.join(c.lower() for c in s if c.isalnum())
+    
+    if len(s) <= 1:
+        return True
+    if s[0] != s[-1]:
+        return False
+    return is_palindrome_recursive(s[1:-1])
+
+# Приклади виклику функцій:
+if __name__ == "__main__":
+    print("Факторіал 5:", factorial_recursive(5))  # 120
+    print("10-те число Фібоначчі:", fibonacci_recursive(10))  # 55
+    print("Сума елементів списку:", sum_list_recursive([1, 2, 3, 4, 5]))  # 15
+    print("Чи є 'A man a plan a canal Panama' паліндромом:", is_palindrome_recursive("A man a plan a canal Panama"))  # True
