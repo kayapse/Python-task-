@@ -1,0 +1,104 @@
+import json
+import os
+from aiogram import Bot, Dispatcher, types
+from aiogram.types import Message
+from aiogram.utils import executor
+from aiogram.dispatcher import FSMContext
+from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from aiogram.dispatcher.filters.state import State, StatesGroup
+
+API_TOKEN = 'YOUR_BOT_TOKEN_HERE'  #  Встав сюди токен свого бота
+
+bot = Bot(token=API_TOKEN)
+storage = MemoryStorage()
+dp = Dispatcher(bot, storage=storage)
+
+DATA_FILE = "notes.json"
+
+def load_notes():
+    if not os.path.exists(DATA_FILE):
+        return []
+    try:
+        with open(DATA_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except:
+        return []
+
+def save_notes(notes):
+    with open(DATA_FILE, "w", encoding="utf-8") as f:
+        json.dump(notes, f, ensure_ascii=False, indent=2)
+
+# Стан для додавання нотатки
+class AddNoteState(StatesGroup):
+    waiting_for_note = State()
+
+# Стан для пошуку
+class SearchNoteState(StatesGroup):
+    waiting_for_keyword = State()
+
+@dp.message_handler(commands=['start'])
+async def cmd_start(message: Message):
+    await message.answer(" Привіт! Я бот для нотаток.\nНапиши /help щоб дізнатись більше.")
+
+@dp.message_handler(commands=['help'])
+async def cmd_help(message: Message):
+    await message.answer(
+        "/start - почати\n"
+        "/help - допомога\n"
+        "/info - про бота\n"
+        "/add - додати нотатку\n"
+        "/list - переглянути нотатки\n"
+        "/search - пошук нотатки\n"
+        "/exit - завершити"
+    )
+
+@dp.message_handler(commands=['info'])
+async def cmd_info(message: Message):
+    await message.answer(" Цей бот дозволяє зберігати, переглядати та шукати ваші нотатки.")
+
+@dp.message_handler(commands=['exit'])
+async def cmd_exit(message: Message):
+    await message.answer(" До зустрічі!")
+
+@dp.message_handler(commands=['add'])
+async def cmd_add(message: Message):
+    await message.answer(" Введіть текст нотатки:")
+    await AddNoteState.waiting_for_note.set()
+
+@dp.message_handler(state=AddNoteState.waiting_for_note)
+async def process_add_note(message: Message, state: FSMContext):
+    note = message.text
+    notes = load_notes()
+    notes.append(note)
+    save_notes(notes)
+    await message.answer(" Нотатку додано.")
+    await state.finish()
+
+@dp.message_handler(commands=['list'])
+async def cmd_list(message: Message):
+    notes = load_notes()
+    if not notes:
+        await message.answer("📭 Нотаток ще немає.")
+    else:
+        reply = "Ваші нотатки:\n" + "\n".join([f"{i+1}. {n}" for i, n in enumerate(notes)])
+        await message.answer(reply)
+
+@dp.message_handler(commands=['search'])
+async def cmd_search(message: Message):
+    await message.answer("Введіть ключове слово для пошуку:")
+    await SearchNoteState.waiting_for_keyword.set()
+
+@dp.message_handler(state=SearchNoteState.waiting_for_keyword)
+async def process_search(message: Message, state: FSMContext):
+    keyword = message.text.lower()
+    notes = load_notes()
+    results = [n for n in notes if keyword in n.lower()]
+    if results:
+        reply = " Знайдено:\n" + "\n".join([f"• {r}" for r in results])
+    else:
+        reply = " Нічого не знайдено."
+    await message.answer(reply)
+    await state.finish()
+
+if __name__ == '__main__':
+    executor.start_polling(dp, skip_updates=True)
