@@ -1,0 +1,77 @@
+# Додавання нового контакту
+def add_contact():
+    print("\nДодавання нового контакту:")
+    name = input("Ім'я: ").strip()
+    surname = input("Прізвище: ").strip()
+    phone = input("Телефон: ").strip()
+    city = input("Місто: ").strip()
+    
+    if not name or not surname or not phone or not city:
+        print("Усі поля є обов’язковими.")
+        return
+
+    new_contact = {
+        "name": name,
+        "surname": surname,
+        "phone": phone,
+        "city": city
+    }
+
+    contacts.append(new_contact)
+    print("Контакт успішно додано.")
+
+# Меню дій
+def main_menu():
+    while True:
+        print("\nМеню:")
+        print("1 - Показати всі контакти")
+        print("2 - Пошук за ім’ям")
+        print("3 - Пошук за прізвищем")
+        print("4 - Пошук за містом")
+        print("5 - Додати контакт")
+        print("6 - Оновити контакт")
+        print("7 - Видалити контакт")
+        print("8 - Аналітика")
+        print("9 - Вихід")
+
+        choice = input("Ваш вибір: ").strip()
+        
+        if choice == "1":
+            print("\nПовна телефонна книга:")
+            for c in contacts:
+                print(f"{c['name']} {c['surname']} | {c['phone']} | {c['city']}")
+        elif choice == "2":
+            search("name")
+        elif choice == "3":
+            search("surname")
+        elif choice == "4":
+            search("city")
+        elif choice == "5":
+            add_contact()
+        elif choice == "6":
+            update_contact()
+        elif choice == "7":
+            delete_contact()
+        elif choice == "8":
+            print("\nАналітика:")
+            cities = {c["city"] for c in contacts}
+            print("Унікальні міста:", cities)
+
+            city_count = {}
+            for c in contacts:
+                city = c["city"]
+                city_count[city] = city_count.get(city, 0) + 1
+
+            for city, count in city_count.items():
+                print(f"{city}: {count} контактів")
+
+            most_common_city = max(city_count, key=city_count.get)
+            print("Місто з найбільшою кількістю контактів:", most_common_city)
+        elif choice == "9":
+            print("Завершення програми. До побачення!")
+            break
+        else:
+            print("Невірний вибір. Спробуйте ще раз.")
+
+# Запуск меню
+main_menu()
