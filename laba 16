@@ -1,0 +1,121 @@
+import json
+from datetime import datetime
+from collections import defaultdict
+
+class Author:
+    def __init__(self, name, bio=""):
+        self.name = name
+        self.bio = bio
+
+    def __str__(self):
+        return self.name
+
+class Book:
+    def __init__(self, title, author: Author, genre):
+        self.title = title
+        self.author = author
+        self.genre = genre
+        self.is_available = True
+
+    def __str__(self):
+        return f"'{self.title}' by {self.author}"
+
+class Library:
+    def __init__(self):
+        self.books = []
+        self.history = []  # історія видачі
+        self.stats = defaultdict(int)  # популярність книг
+
+    def add_book(self, book: Book):
+        self.books.append(book)
+        print(f"Додано книгу: {book}")
+
+    def remove_book(self, title):
+        original_len = len(self.books)
+        self.books = [book for book in self.books if book.title != title]
+        if len(self.books) < original_len:
+            print(f"Книгу '{title}' видалено.")
+        else:
+            print("Книгу не знайдено.")
+
+    def search_books(self, keyword):
+        results = [book for book in self.books if keyword.lower() in book.title.lower()]
+        if results:
+            print("Знайдено книги:")
+            for book in results:
+                print(" -", book)
+        else:
+            print("Книг не знайдено за цим запитом.")
+
+    def borrow_book(self, title, user):
+        for book in self.books:
+            if book.title == title and book.is_available:
+                book.is_available = False
+                borrow_date = datetime.now()
+                self.history.append({
+                    "user": user,
+                    "book": title,
+                    "borrow_date": borrow_date,
+                    "return_date": None
+                })
+                self.stats[title] += 1
+                print(f"{user} взяв книгу: '{title}'")
+                return
+        print("Книга недоступна або не знайдена.")
+
+    def return_book(self, title, user):
+        for record in self.history:
+            if record["book"] == title and record["user"] == user and record["return_date"] is None:
+                record["return_date"] = datetime.now()
+                for book in self.books:
+                    if book.title == title:
+                        book.is_available = True
+                        print(f"{user} повернув книгу: '{title}'")
+                        return
+        print("Повернення неможливе: запис не знайдено.")
+
+    def export_statistics(self, filename="statistics.json"):
+        total_books = len(self.books)
+        total_issued = sum(self.stats.values())
+        returned = [r for r in self.history if r["return_date"]]
+        avg_reading_time = None
+
+        if returned:
+            total_days = sum([(r["return_date"] - r["borrow_date"]).days for r in returned])
+            avg_reading_time = total_days / len(returned)
+
+        return_percentage = (len(returned) / len(self.history)) * 100 if self.history else 0
+
+        data = {
+            "total_books": total_books,
+            "books_popularity": dict(self.stats),
+            "return_percentage": round(return_percentage, 2),
+            "average_reading_days": round(avg_reading_time, 2) if avg_reading_time else None
+        }
+
+        with open(filename, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=4)
+
+        print(f"Статистика збережена у файл '{filename}'")
+
+if __name__ == "__main__":
+    # Ініціалізація бібліотеки
+    library = Library()
+
+    # Автори
+    author1 = Author("Олександр Гриневич", "Сучасний український письменник")
+    author2 = Author("Марина Ковальчук", "Авторка фентезі та наукової фантастики")
+
+    book1 = Book("Код Пам'яті", author1, "Детектив")
+    book2 = Book("Крила в тумані", author2, "Фентезі")
+    book3 = Book("Світло під водою", author2, "Фантастика")
+
+    library.add_book(book1)
+    library.add_book(book2)
+    library.add_book(book3)
+    library.search_books("тумані")
+    library.borrow_book("Код Пам'яті", "Андрій")
+    library.borrow_book("Крила в тумані", "Наталя")
+    library.return_book("Код Пам'яті", "Андрій")
+    library.remove_book("Світло під водою")
+    library.export_statistics()
