@@ -1,0 +1,40 @@
+class Person:
+    def __init__(self, name, health, attack_power):
+        self.name = name
+        self.health = health
+        self.attack_power = attack_power
+
+    def attack(self, other):
+        """Атака іншого персонажа — зменшує його здоров'я."""
+        print(f"{self.name} атакує {other.name} на {self.attack_power} урону!")
+        other.health -= self.attack_power
+        if other.health < 0:
+            other.health = 0
+        print(f"{other.name} має {other.health} здоров'я.")
+
+    def is_alive(self):
+        """Перевіряє, чи живий персонаж."""
+        return self.health > 0
+
+    def get_status(self):
+        """Виводить інформацію про персонажа."""
+        print(f"{self.name}: {self.health} HP")
+
+
+hero = Person("Лицар", 100, 20)
+enemy = Person("Орк", 80, 15)
+
+round_number = 1
+print("=== Початок бою ===")
+while hero.is_alive() and enemy.is_alive():
+    print(f"\n--- Раунд {round_number} ---")
+    hero.attack(enemy)
+    if enemy.is_alive():
+        enemy.attack(hero)
+    round_number += 1
+
+print("\n=== Бій завершено ===")
+if hero.is_alive():
+    print(f"Переміг {hero.name}!")
+else:
+    print(f"Переміг {enemy.name}!")
