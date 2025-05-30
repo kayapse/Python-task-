@@ -1,0 +1,63 @@
+import random
+
+def task1():
+    answer = "кіт"
+    tries = 3
+    print("\n[Гра 1] Вгадай, кого або що я загадав (живе, неживе або вигадане).")
+    while tries > 0:
+        guess = input("Твоя здогадка: ").strip().lower()
+        if guess == answer:
+            print("Правильно!")
+            return
+        else:
+            print("Неправильно.")
+            tries -= 1
+    print("Гра закінчена. Відповідь була:", answer)
+
+def task2():
+    answer = "шевченко"
+    hints = [
+        "Відомий поет.",
+        "Його портрет є в шкільних підручниках.",
+        "Жив у 19 столітті."
+    ]
+    print("\n[Гра 2] Вгадай, кого я загадав.")
+    for hint in hints:
+        guess = input("Твоя відповідь: ").strip().lower()
+        if guess == answer:
+            print("Ти вгадав! Молодець!")
+            return
+        else:
+            print("Неправильно. Підказка:", hint)
+    print("Це був:", answer)
+
+def task3():
+    answer = "панда"
+    tries = 0
+    print("\n[Гра 3] Вгадай слово (але гра трохи дивна)...")
+    while True:
+        guess = input("Твоя здогадка: ").strip().lower()
+        tries += 1
+        if guess == answer:
+            print("Можливо, ти вгадав. А можливо, й ні...")
+            break
+        elif tries > 5:
+            print("Гра закінчилась. Відповідь була:", answer)
+            break
+        else:
+            print("Хмм... цікаво. Спробуй ще.")
+
+print("Вибери гру:")
+print("1 - Хтось або щось")
+print("2 - Це відома людина?")
+print("3 - Я думаю, це... хоча, може, й ні")
+
+choice = input("Введи номер гри (1-3): ").strip()
+if choice == "1":
+    task1()
+elif choice == "2":
+    task2()
+elif choice == "3":
+    task3()
+else:
+    print("Невірний вибір.")
