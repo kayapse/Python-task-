@@ -1,0 +1,115 @@
+import random
+
+# Гра: розподіл скарбів між гравцями
+def game_treasure():
+    try:
+        coins = random.randint(1, 1000)
+        players = int(input("Введіть кількість людей у команді: "))
+        share = coins // players
+        print(f"Кожен отримує {share} монет.")
+    except ValueError:
+        print("Помилка: введіть число.")
+    except ZeroDivisionError:
+        print("Помилка: ділення на нуль.")
+    finally:
+        print("Пригоди тривають!")
+
+# Гра: зламування сейфа з кодом
+def game_safe():
+    code = random.randint(100, 999)
+    attempts = 5
+    while attempts > 0:
+        try:
+            guess = int(input("Введіть тризначний код: "))
+            if guess < code:
+                print("Код більше.")
+            elif guess > code:
+                print("Код менше.")
+            else:
+                print("Ви зламали сейф!")
+                return
+        except ValueError:
+            print("Помилка: введіть число.")
+        finally:
+            attempts -= 1
+            print(f"Залишилось спроб: {attempts}")
+    print(f"Ви програли! Код був {code}.")
+
+# Гра: Камінь-ножиці-папір-ящірка-Спок
+def game_rpsls():
+    options = ["камінь", "ножиці", "папір", "ящірка", "Спок"]
+    rules = {
+        "камінь": ["ножиці", "ящірка"],
+        "ножиці": ["папір", "ящірка"],
+        "папір": ["камінь", "Спок"],
+        "ящірка": ["папір", "Спок"],
+        "Спок": ["ножиці", "камінь"]
+    }
+    try:
+        player = input("Виберіть: камінь, ножиці, папір, ящірка, Спок: ")
+        if player not in options:
+            raise ValueError("Невірний ввід!")
+        bot = random.choice(options)
+        print(f"Комп'ютер вибрав: {bot}")
+        if player == bot:
+            print("Нічия!")
+        elif bot in rules[player]:
+            print("Ви перемогли!")
+        else:
+            print("Ви програли!")
+    except ValueError as e:
+        print(e)
+
+# Гра: нарахування бонусних балів
+def game_bonus():
+    try:
+        points = int(input("Введіть кількість очок (0-100): "))
+        if points < 0 or points > 100:
+            raise ValueError("Некоректний ввід!")
+        if points < 50:
+            multiplier, rank = 1, "Початківець"
+        elif points < 70:
+            multiplier, rank = 1.5, "Срібний гравець"
+        elif points < 90:
+            multiplier, rank = 2, "Золотий гравець"
+        else:
+            multiplier, rank = 3, "Платиновий гравець"
+        print(f"Ваш рейтинг: {rank}! Ви отримали {int(points * multiplier)} балів.")
+    except ValueError:
+        print("Помилка: введіть число від 0 до 100.")
+
+# Гра: втеча з острова
+def game_escape():
+    try:
+        wood = int(input("Введіть кількість деревини (1-10): "))
+        if wood < 3:
+            print("Деревини замало, пліт затонув!")
+            return
+    except ValueError:
+        print("Це не число!")
+        return
+    try:
+        action = input("Виберіть дію (втекти, сховатися, битися): ")
+        if action not in ["втекти", "сховатися", "битися"]:
+            raise ValueError("Такого варіанту немає, пірати вас спіймали!")
+    except ValueError as e:
+        print(e)
+        return
+    code = random.randint(10, 99)
+    try:
+        guess = int(input("Введіть код (двозначне число): "))
+        if guess != code:
+            print("Неправильний код, скриня вибухнула! Гру завершено.")
+            return
+        print("Скарб ваш, ви врятовані!")
+    except ValueError:
+        print("Помилка: введіть число.")
+    finally:
+        print("Гра завершена. Дякуємо за участь у пригоді!")
+
+if __name__ == "__main__":
+    game_treasure()
+    game_safe()
+    game_rpsls()
+    game_bonus()
+    game_escape()
