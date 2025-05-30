@@ -1,0 +1,52 @@
+from collections import Counter
+
+def task1():
+    text = input("Введіть рядок: ")
+    vowels = "аеєиіїоуюяАЕЄИІЇОУЮЯ"
+    vowel_list = [char for char in text if char in vowels]
+    consonant_list = [char for char in text if char.isalpha() and char not in vowels]
+    print(f"Голосні ({len(vowel_list)}): {vowel_list}")
+    print(f"Приголосні ({len(consonant_list)}): {consonant_list}")
+    print(f"Усі літери ({len(vowel_list + consonant_list)}): {vowel_list + consonant_list}\n")
+
+def task2():
+    try:
+        list1 = list(map(int, input("Введіть числа для першого списку через пробіл: ").split()))
+        list2 = list(map(int, input("Введіть числа для другого списку через пробіл: ").split()))
+    except ValueError:
+        print("Помилка: потрібно вводити лише числа!\n")
+        return
+    combined = list1 + list2
+    unique_sorted = sorted(set(combined))
+    print(f"Об'єднаний список: {combined}")
+    print(f"Без повторів: {list(set(combined))}")
+    print(f"Відсортований без повторів: {unique_sorted}\n")
+
+def task3():
+    text = input("Введіть будь-який текст: ")
+    counter = Counter(text)
+    unique = {char for char in text if text.count(char) == 1}
+    print("Частота кожного символу:")
+    for char, count in counter.items():
+        print(f"'{char}': {count}")
+    print(f"\nУнікальні символи: {unique}\n")
+
+while True:
+    print("=== Меню лабораторної роботи No8 ===")
+    print("1. Аналіз голосних/приголосних у рядку")
+    print("2. Обробка двох списків чисел")
+    print("3. Аналіз символів у тексті")
+    print("0. Вийти")
+    choice = input("Оберіть завдання (0-3): ")
+    print()
+    if choice == "1":
+        task1()
+    elif choice == "2":
+        task2()
+    elif choice == "3":
+        task3()
+    elif choice == "0":
+        print("Роботу завершено.")
+        break
+    else:
+        print("Невірний вибір, спробуйте ще раз.\n")
