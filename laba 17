@@ -1,0 +1,73 @@
+import json
+import os
+
+class Assistant:
+    def __init__(self, filename="notes.json"):
+        self.filename = filename
+        self.notes = self.load_notes()
+
+    def load_notes(self):
+        if not os.path.exists(self.filename):
+            return []
+        try:
+            with open(self.filename, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except (json.JSONDecodeError, FileNotFoundError):
+            print("⚠️ Помилка при зчитуванні файлу. Створюю новий файл.")
+            return []
+
+    def save_notes(self):
+        with open(self.filename, "w", encoding="utf-8") as f:
+            json.dump(self.notes, f, ensure_ascii=False, indent=2)
+
+    def add_note(self, note: str):
+        self.notes.append(note)
+        self.save_notes()
+        print("✅ Нотатку додано.")
+
+    def list_notes(self):
+        if not self.notes:
+            print("📭 Нотаток немає.")
+        else:
+            print("📒 Список нотаток:")
+            for i, note in enumerate(self.notes, 1):
+                print(f"{i}. {note}")
+
+    def search_notes(self, keyword: str):
+        results = [note for note in self.notes if keyword.lower() in note.lower()]
+        if results:
+            print("🔍 Знайдено нотатки:")
+            for note in results:
+                print(f" - {note}")
+        else:
+            print("❌ Нічого не знайдено.")
+
+
+def main():
+    assistant = Assistant()
+
+    print("👋 Вітаю! Це консольний помічник.")
+    while True:
+        command = input("\nВведіть команду (/add, /list, /search, /exit): ").strip()
+
+        if command == "/add":
+            note = input("Введіть текст нотатки: ")
+            assistant.add_note(note)
+
+        elif command == "/list":
+            assistant.list_notes()
+
+        elif command == "/search":
+            keyword = input("Введіть ключове слово для пошуку: ")
+            assistant.search_notes(keyword)
+
+        elif command == "/exit":
+            print("👋 До побачення!")
+            break
+
+        else:
+            print("❓ Невідома команда. Спробуйте ще раз.")
+
+
+if __name__ == "__main__":
+    main()
